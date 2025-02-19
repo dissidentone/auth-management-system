@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthGen GUI</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        input, button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>AuthGen GUI</h1>
+
+    <h2>Kayıt Ol</h2>
+    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+    <input type="password" id="regPassword" placeholder="Şifre">
+    <select id="regRole">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+    </select>
+    <button onclick="register()">Kayıt Ol</button>
+    <p id="regMessage"></p>
+
+    <h2>Giriş Yap</h2>
+    <input type="text" id="loginUsername" placeholder="Kullanıcı Adı">
+    <input type="password" id="loginPassword" placeholder="Şifre">
+    <button onclick="login()">Giriş Yap</button>
+    <p id="loginMessage"></p>
+
+    <script>
+        const { ipcRenderer } = require("electron");
+
+        async function register() {
+            const username = document.getElementById("regUsername").value;
+            const password = document.getElementById("regPassword").value;
+            const role = document.getElementById("regRole").value;
+
+            const response = await ipcRenderer.invoke("register", { username, password, role });
+            document.getElementById("regMessage").innerText = response.message || response.error;
+        }
+
+        async function login() {
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+
+            const response = await ipcRenderer.invoke("login", { username, password });
+            document.getElementById("loginMessage").innerText = response.message || response.error;
+        }
+    </script>
+</body>
+</html>
